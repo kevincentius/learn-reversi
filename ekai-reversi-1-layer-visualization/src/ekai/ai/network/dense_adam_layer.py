@@ -1,10 +1,13 @@
 
 import numpy as np
 
-class DenseLayer(object):
+class DenseAdamLayer(object):
     
     # hyperparameters
     l2regularization = (1-2*0.000)
+    beta1 = 0.9 # momentum
+    beta2 = 0.999 # RMSprop
+    eps = 0.00000001
 
     # binding
     next_layer = None
@@ -61,9 +64,15 @@ class DenseLayer(object):
         
         prev_d_actv = np.dot(self.w.T, d_prop)
         
+        # update exponentially weighted averages
+        self.vdw = self.beta1 * self.vdw + (1 - self.beta1) * d_w
+        self.vdb = self.beta1 * self.vdb + (1 - self.beta1) * d_b
+        self.sdw = self.beta2 * self.sdw + (1 - self.beta2) * np.multiply(d_w, d_w)
+        self.sdb = self.beta2 * self.sdb + (1 - self.beta2) * np.multiply(d_b, d_b)
+        
         # update weights
-        self.w = self.w * self.l2regularization - self.learn_rate * d_w
-        self.b = self.b - self.learn_rate * d_b
+        self.w = self.w * self.l2regularization - self.learn_rate * self.vdw / (np.sqrt(self.sdw) + self.eps)
+        self.b = self.b - self.learn_rate * self.vdb / (np.sqrt(self.sdb) + self.eps)
         
         self.prev_layer.backward_prop(prev_d_actv);
         

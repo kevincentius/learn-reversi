@@ -5,22 +5,27 @@ Created on 1 Apr 2018
 '''
 from math import inf
 
-from ekai.ai.network.dense_layer import DenseLayer
+from ekai.ai.network.activation.tanh import TanH
+from ekai.ai.network.dense_adam_layer import DenseAdamLayer
 from ekai.ai.network.input_layer import InputLayer
 from ekai.ai.network.network import Network
 import numpy as np
-from ekai.ai.network.activation.tanh import TanH
 
 
 class Player(object):
 
-    learning_rate = 0.01
+    name = 'untitled'
+
+    learning_rate = 0.001
+    exploration_min = 0.04
+    exploration_decay = 0.999
+    
     exploration = 1
     total_games = 0
     
     def __init__(self):
         self.input_layer = InputLayer(128)
-        self.dense_layer = DenseLayer(self.input_layer, 1, self.learning_rate, TanH())
+        self.dense_layer = DenseAdamLayer(self.input_layer, 1, self.learning_rate, TanH())
         self.network = Network(self.input_layer, self.dense_layer)
         
     
@@ -52,3 +57,10 @@ class Player(object):
             move = self.pick_random_move(legal_moves)
         return move
 
+    
+    def train_game(self, inp, out):
+        self.network.train(inp, out)
+        # decrease exploration
+        self.exploration = max(self.exploration_min, self.exploration * self.exploration_decay)
+        # stats
+        self.total_games += 1

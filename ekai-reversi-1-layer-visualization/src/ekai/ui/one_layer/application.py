@@ -3,7 +3,7 @@ Created on 2 Apr 2018
 
 @author: Eldemin
 '''
-from ekai.ui.ui import UI
+from ekai.ui.one_layer.ui import UI
 from kivy.app import App
 from ekai.ai.reversi.player import Player
 from ekai.ai.reversi.trainer import Trainer
@@ -20,8 +20,26 @@ class Application(App):
         self.ui = UI(self)
         self.ui.reversi_ui.update(self.trainer.reversi)
         self.ui.reversi_ui.show_weights(self.player.dense_layer.w)
+        self.ui.player_ui.set_obj(self.player)
         return self.ui
 
+    
+    def player_load_callback(self, player):
+        self.trainer.player = player
+        self.player = player
+        self.ui.reversi_ui.show_weights(self.player.dense_layer.w)
+    
+    def make_random_move(self):
+        self.trainer.make_random_move()
+        self.ui.reversi_ui.update(self.trainer.reversi)
+        pass
+    
+    
+    def make_best_move(self):
+        self.trainer.make_best_move()
+        self.ui.reversi_ui.update(self.trainer.reversi)
+        pass
+    
     
     def make_training_move(self):
         self.trainer.make_training_move()
@@ -38,6 +56,7 @@ class Application(App):
     def finish_and_train(self):
         self.trainer.finish_and_train()
         self.ui.reversi_ui.show_weights(self.player.dense_layer.w)
+        self.ui.player_ui.update()
     
     
     def reset_game(self):
@@ -51,6 +70,7 @@ class Application(App):
         self.trainer.finish_and_train()
         self.ui.reversi_ui.update(self.trainer.reversi)
         self.ui.reversi_ui.show_weights(self.player.dense_layer.w)
+        self.ui.player_ui.update()
         
     
     def train_n_games(self, n):
@@ -61,6 +81,7 @@ class Application(App):
         
         self.ui.reversi_ui.update(self.trainer.reversi)
         self.ui.reversi_ui.show_weights(self.player.dense_layer.w)
+        self.ui.player_ui.update()
         
     
     def toggle_auto_train(self):

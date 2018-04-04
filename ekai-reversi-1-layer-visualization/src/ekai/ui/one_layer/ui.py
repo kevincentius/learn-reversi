@@ -9,12 +9,14 @@ from ekai.ui.reversi_ui import ReversiUI
 from kivy.uix.widget import Widget
 from kivy.uix.stacklayout import StackLayout
 from _functools import partial
+from ekai.ui.player_ui import PlayerUI
+from ekai.ui.attr_ui import AttrUI
 
 
 class UI(StackLayout):
 
     reversi_ui = ReversiUI()
-    btn_stack = StackLayout()
+    btn_stack = StackLayout(size_hint=[None, None], width=160)
 
     def create_button(self, text, callback):
         btn = Button(text=text, size_hint_x=None, size_hint_y=None, width=160, height=30)
@@ -39,3 +41,5 @@ class UI(StackLayout):
         self.create_button('train 10 game', partial(controller.train_n_games, 10))
         self.create_button('auto train', controller.toggle_auto_train)
     
+        self.player_ui = PlayerUI(controller.player_load_callback)
+        self.add_widget(self.player_ui.node)

@@ -22,6 +22,24 @@ class Trainer(object):
             self.make_training_move()
         
     
+    def make_random_move(self):
+        legal_moves = self.reversi.get_legal_moves()
+        if len(legal_moves) > 0:
+            move = self.player.pick_random_move(legal_moves)
+            self.reversi.play_move(move)
+        else:
+            self.reversi.pass_move()
+
+
+    def make_best_move(self):
+        legal_moves = self.reversi.get_legal_moves()
+        if len(legal_moves) > 0:
+            move = self.player.pick_best_move(self.reversi, legal_moves)
+            self.reversi.play_move(move)
+        else:
+            self.reversi.pass_move()
+
+    
     def make_training_move(self):
         legal_moves = self.reversi.get_legal_moves()
         
@@ -71,10 +89,7 @@ class Trainer(object):
         self.side_array = []
         
         # train network
-        self.player.network.train(inp, out)
-        
-        # decrease exploration
-        self.player.exploration = max(0.04, self.player.exploration * 0.999)
+        self.player.train_game(inp, out)
         
         # evaluation
         self.sum_score += abs(self.reversi.board.sum())
