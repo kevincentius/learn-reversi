@@ -39,7 +39,7 @@ class ReversiUI(object):
     def show_weights(self, w):
         for y in range(0, 8):
             for x in range(0, 8):
-                self.tiles[y][x].show_weight(w[0][y*8 + x])
+                self.tiles[y][x].show_weight(w[0][y*8 + x], w[0][64 + y*8 + x])
     
     
     

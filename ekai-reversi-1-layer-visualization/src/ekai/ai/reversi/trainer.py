@@ -41,9 +41,18 @@ class Trainer(object):
         # save history
         cinp = self.reversi.get_input(move)
         
-        self.inp_array.append(self.reshape_input(cinp))
-        self.side_array.append(self.reversi.side)
-        
+        for rot in range(0, 4):
+            # append original position
+            self.inp_array.append(self.reshape_input(cinp))
+            self.side_array.append(self.reversi.side)
+            
+            # append transposed position (data augmentation)
+            self.inp_array.append(self.reshape_input([cinp[0].T, cinp[1].T]))
+            self.side_array.append(self.reversi.side)
+            
+            # rotate position (data augmentation)
+            cinp[0] = np.rot90(cinp[0])
+            cinp[1] = np.rot90(cinp[1])
         
 
     def finish_and_train(self):
@@ -54,10 +63,8 @@ class Trainer(object):
         # if white wins, flip the side
         # if draw, treat as if black wins, i.e. do not flip the side
         out = np.asarray(self.side_array).reshape(1, -1)
-        print(out)
         if self.reversi.get_winner() == -1:
             out = np.multiply(out, -1)
-        print(out)
         
         # clear data from pipeline
         self.inp_array = []

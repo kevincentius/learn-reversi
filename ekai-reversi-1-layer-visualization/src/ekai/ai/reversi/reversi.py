@@ -115,17 +115,10 @@ class Reversi(object):
             own_mat[flipped_tile[0]][flipped_tile[1]] = 1
             opponent_mat[flipped_tile[0]][flipped_tile[1]] = 0
         
-        own_mat = own_mat.reshape(self.size, 1)
-        opponent_mat = opponent_mat.reshape(self.size, 1)
-        
         return [own_mat, opponent_mat]
         
         
     def get_winner(self):
-        print('black sum: ', (self.board == 1).sum())
-        print('white sum: ', (self.board == -1).sum())
-        print('sum: ', (self.board == 1).sum() - (self.board == -1).sum())
-        print('sign: ', np.sign((self.board == 1).sum() - (self.board == -1).sum()))
         return np.sign((self.board == 1).sum() - (self.board == -1).sum())
         
         

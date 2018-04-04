@@ -8,6 +8,7 @@ from ekai.ai.reversi.reversi import Reversi
 from ekai.ui.reversi_ui import ReversiUI
 from kivy.uix.widget import Widget
 from kivy.uix.stacklayout import StackLayout
+from _functools import partial
 
 
 class UI(StackLayout):
@@ -22,12 +23,19 @@ class UI(StackLayout):
 
     def __init__(self, controller):
         super(UI, self).__init__()
+        self.orientation = 'lr-tb'
         self.add_widget(self.reversi_ui.node)
-        self.reversi_ui.node.pos = 50, self.reversi_ui.node.size[1]
         
+        self.btn_stack.orientation = 'tb-lr'
+        self.btn_stack.size_hint = None, 1
         self.add_widget(self.btn_stack)
+        self.create_button('1 random move', controller.make_random_move)
+        self.create_button('1 best move', controller.make_best_move)
         self.create_button('1 training move', controller.make_training_move)
         self.create_button('1 training game', controller.play_one_training_game)
         self.create_button('finish and train', controller.finish_and_train)
         self.create_button('reset game', controller.reset_game)
+        self.create_button('train 1 game', controller.reset_and_train_one_game)
+        self.create_button('train 10 game', partial(controller.train_n_games, 10))
+        self.create_button('auto train', controller.toggle_auto_train)
     

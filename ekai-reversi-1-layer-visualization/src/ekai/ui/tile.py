@@ -3,7 +3,8 @@ from kivy.uix.button import Button
 
 class Tile(Button):
 
-    last_w = None
+    last_w_own = None
+    last_w_opp = None
 
     def __init__(self):
         Button.__init__(self)
@@ -23,16 +24,21 @@ class Tile(Button):
         else:
             raise Exception('Invalid team ' + team)
 
-    def show_weight(self, w):
-        if self.last_w == None or self.last_w == w:
+
+    def get_weight_text(self, last_w, w):
+        if last_w == None or last_w == w:
             sign = '*'
-        elif self.last_w < w:
+        elif last_w < w:
             sign = '+'
         else:
             sign = '-'
-        
-        self.last_w = w
-        self.text = str(round(w, 3)) + sign
+        return str(round(w, 3)) + sign
+
+    def show_weight(self, w_own, w_opp):
+        self.text = self.get_weight_text(self.last_w_own, w_own)
+        self.text += '\n' + self.get_weight_text(self.last_w_opp, w_opp)
+        self.last_w_own = w_own
+        self.last_w_opp = w_opp
         
         
     
