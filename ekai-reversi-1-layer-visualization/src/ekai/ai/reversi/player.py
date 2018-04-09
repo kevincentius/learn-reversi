@@ -23,10 +23,8 @@ class Player(object):
     exploration = 1
     total_games = 0
     
-    def __init__(self):
-        self.input_layer = InputLayer(128)
-        self.dense_layer = DenseAdamLayer(self.input_layer, 1, self.learning_rate, TanH())
-        self.network = Network(self.input_layer, self.dense_layer)
+    def __init__(self, network):
+        self.network = network
         
     
     def reshape_input(self, cinp):

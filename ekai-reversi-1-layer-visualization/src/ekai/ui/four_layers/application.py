@@ -10,16 +10,17 @@ from kivy.clock import Clock
 from kivy.uix.button import Button
 from kivy.uix.stacklayout import StackLayout
 
+from ekai.ai.network.activation.tanh import TanH
+from ekai.ai.network.dense_adam_layer import DenseAdamLayer
+from ekai.ai.network.input_layer import InputLayer
 from ekai.ai.reversi.player import Player
 from ekai.ai.reversi.trainer import Trainer
 from ekai.ui.player_ui import PlayerUI
 from ekai.ui.reversi_ui import ReversiUI
+from ekai.ai.network.network import Network
 
 
 class Application(App):
-
-    player = Player()
-    trainer = Trainer(player)
     
     clockEvent = None
     
@@ -33,6 +34,19 @@ class Application(App):
 
     
     def build(self):
+        learning_rate = 0.001
+        
+        input_layer = InputLayer(128)
+        last_layer = DenseAdamLayer(input_layer, 256, learning_rate, TanH())
+        last_layer = DenseAdamLayer(last_layer, 256, learning_rate, TanH())
+        last_layer = DenseAdamLayer(last_layer, 256, learning_rate, TanH())
+        last_layer = DenseAdamLayer(last_layer, 1, learning_rate, TanH())
+            
+        self.player = Player(Network(input_layer, last_layer))
+        
+        self.trainer = Trainer(self.player)
+        
+        
         self.layout = StackLayout();
         self.layout.orientation = 'lr-tb'
         self.layout.add_widget(self.reversi_ui.node)
@@ -56,7 +70,6 @@ class Application(App):
         
         
         self.reversi_ui.update(self.trainer.reversi)
-        self.reversi_ui.show_weights(self.player.dense_layer.w)
         self.player_ui.set_obj(self.player)
         return self.layout
 
@@ -64,7 +77,6 @@ class Application(App):
     def player_load_callback(self, player):
         self.trainer.player = player
         self.player = player
-        self.reversi_ui.show_weights(self.player.dense_layer.w)
     
     def make_random_move(self):
         self.trainer.make_random_move()
@@ -92,7 +104,6 @@ class Application(App):
     
     def finish_and_train(self):
         self.trainer.finish_and_train()
-        self.reversi_ui.show_weights(self.player.dense_layer.w)
         self.player_ui.update()
     
     
@@ -106,7 +117,6 @@ class Application(App):
         self.trainer.play_one_training_game()
         self.trainer.finish_and_train()
         self.reversi_ui.update(self.trainer.reversi)
-        self.reversi_ui.show_weights(self.player.dense_layer.w)
         self.player_ui.update()
         
     
@@ -117,7 +127,6 @@ class Application(App):
             self.trainer.finish_and_train()
         
         self.reversi_ui.update(self.trainer.reversi)
-        self.reversi_ui.show_weights(self.player.dense_layer.w)
         self.player_ui.update()
         
     
