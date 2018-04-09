@@ -10,7 +10,7 @@ class PlayerUI(AttrUI):
     
     def __init__(self, load_callback):
         AttrUI.__init__(self, [
-            ['name', 'name'],
+            ['name', 'name', 's'],
             ['learning_rate', 'alpha'],
             ['exploration_min', 'min. explr'],
             ['exploration_decay', 'decay explr'],

@@ -10,6 +10,15 @@ from kivy.uix.button import Button
 import pickle
 
 class AttrUI(object):
+    # This class enables the user to save/load an object and edit some of its field values
+    #
+    # The 'fields' parameter of the constructor defines which parameters should be shown/bound
+    #    Each element in 'fields' is an array of min size 2:
+    #    -> [0]: variablue name (for reflection purposes)
+    #    -> [1]: display name
+    #    -> [2]: variable type (optional, default: float)
+    #        default: float
+    #        's': string
 
     node = GridLayout(cols=2, row_force_default=True, row_default_height=30, width=250)
     
@@ -36,8 +45,14 @@ class AttrUI(object):
         
         self.fields = []
         for field in fields:
-            textInput = self.add_row(field[1])
-            self.fields.append([field[0], textInput])
+            if len(field) > 2:
+                vtype = field[2]
+            else:
+                vtype = 'f'
+            
+            text_input = self.add_row(field[1])
+            self.fields.append([field[0], text_input, vtype])
+            
         
         self.create_button('reset', self.update)
         self.create_button('commit', self.commit)
@@ -60,8 +75,12 @@ class AttrUI(object):
     
     def commit(self):
         for field in self.fields:
-            setattr(self.obj, field[0], float(field[1].text))
-    
+            if field[2] == 'f':
+                val = float(field[1].text)
+            elif field[2] == 's':
+                val = field[1].text
+            
+            setattr(self.obj, field[0], val)
     
     def save(self):
         pickle.dump(self.obj, open(self.pickle_path, "wb"))

@@ -10,7 +10,7 @@ import numpy as np
 from ekai.ai.network.dense_adam_layer import DenseAdamLayer
 from ekai.ai.network.activation.relu import Relu
 from ekai.ai.network.activation.leaky_relu import LeakyRelu
-from ekai.ui.one_layer.application import Application
+from ekai.ui.four_layers.application import Application
 
 
 #kivy.require('1.0.6') # replace with your current kivy version !
