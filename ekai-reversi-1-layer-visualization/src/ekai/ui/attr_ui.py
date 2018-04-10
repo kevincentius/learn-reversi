@@ -81,6 +81,10 @@ class AttrUI(object):
                 val = field[1].text
             
             setattr(self.obj, field[0], val)
+            
+            on_update_fname = 'on_update_' + field[0]
+            if hasattr(self.obj, on_update_fname):
+                getattr(self.obj, on_update_fname)()
     
     def save(self):
         pickle.dump(self.obj, open(self.pickle_path, "wb"))

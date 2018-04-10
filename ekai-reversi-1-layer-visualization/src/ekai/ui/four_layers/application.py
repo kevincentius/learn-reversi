@@ -18,6 +18,7 @@ from ekai.ai.reversi.trainer import Trainer
 from ekai.ui.player_ui import PlayerUI
 from ekai.ui.reversi_ui import ReversiUI
 from ekai.ai.network.network import Network
+from ekai.ai.network.activation.leaky_relu import LeakyRelu
 
 
 class Application(App):
@@ -34,23 +35,30 @@ class Application(App):
 
     
     def build(self):
-        learning_rate = 0.001
+        # build player
+        learning_rate = 0.01
         
         input_layer = InputLayer(128)
-        last_layer = DenseAdamLayer(input_layer, 256, learning_rate, TanH())
-        last_layer = DenseAdamLayer(last_layer, 256, learning_rate, TanH())
-        last_layer = DenseAdamLayer(last_layer, 256, learning_rate, TanH())
+        last_layer = DenseAdamLayer(input_layer, 128, learning_rate, LeakyRelu())
+        last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
+        last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
+        last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
+        last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
+        last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
+        last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
         last_layer = DenseAdamLayer(last_layer, 1, learning_rate, TanH())
-            
+        
         self.player = Player(Network(input_layer, last_layer))
         
         self.trainer = Trainer(self.player)
         
         
+        # build layout
         self.layout = StackLayout();
         self.layout.orientation = 'lr-tb'
         self.layout.add_widget(self.reversi_ui.node)
         
+        # build btn stack
         self.btn_stack.orientation = 'tb-lr'
         self.btn_stack.size_hint = None, 1
         self.layout.add_widget(self.btn_stack)
@@ -64,15 +72,22 @@ class Application(App):
         self.create_button('train 10 game', partial(self.train_n_games, 10))
         self.create_button('auto train', self.toggle_auto_train)
     
+        # build player's AttrUI
         self.player_ui = PlayerUI(self.player_load_callback)
         self.layout.add_widget(self.player_ui.node)
-        
-        
-        
-        self.reversi_ui.update(self.trainer.reversi)
         self.player_ui.set_obj(self.player)
+        
+        # prepare board UI
+        self.reversi_ui.update(self.trainer.reversi)
+        self.reversi_ui.set_on_tile_clicked(self.on_tile_clicked)
+        
         return self.layout
 
+    
+    def on_tile_clicked(self, pos):
+        self.trainer.make_move(pos)
+        self.reversi_ui.update(self.trainer.reversi)
+    
     
     def player_load_callback(self, player):
         self.trainer.player = player

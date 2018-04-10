@@ -10,6 +10,8 @@ class ReversiUI(object):
     
     node = GridLayout(cols = 8, rows = 8, size_hint_x = None, size_hint_y = None)
     tiles = []
+    
+    on_tile_clicked = None
 
     def __init__(self):
         self.node.row_force_default = True
@@ -24,11 +26,21 @@ class ReversiUI(object):
                 tile = Tile()
                 row.append(tile)
                 self.node.add_widget(tile)
+                self.__bind_tile_click(tile, y, x)
             self.tiles.append(row)
         
         self.node.width = self.tile_size * 8 + self.spacing * 7
         self.node.height = self.tile_size * 8 + self.spacing * 7
             
+            
+    def __bind_tile_click(self, tile, y, x):
+        tile.bind(on_press=lambda instance: self.__callback([y, x]))
+        
+    
+    def __callback(self, pos):
+        if self.on_tile_clicked is not None:
+            self.on_tile_clicked(pos)
+    
     
     def update(self, reversi: Reversi):
         for y in range(0, 8):
@@ -36,6 +48,6 @@ class ReversiUI(object):
                 self.tiles[y][x].update(reversi.board[y][x])
     
     
-    
-    
+    def set_on_tile_clicked(self, on_tile_clicked):
+        self.on_tile_clicked = on_tile_clicked
     

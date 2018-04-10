@@ -4,7 +4,7 @@ import numpy as np
 class DenseAdamLayer(object):
     
     # hyperparameters
-    l2regularization = (1-2*0.000)
+    l2regularization = (1-2*0.000) # mean squared weight loss function (weight decay)
     beta1 = 0.9 # momentum
     beta2 = 0.999 # RMSprop
     eps = 0.00000001
@@ -77,9 +77,12 @@ class DenseAdamLayer(object):
         self.prev_layer.backward_prop(prev_d_actv);
         
     
-    
-    
-    
+    # assuming every layer has the same learning rate
+    # sets the learning rate of this and all next layers
+    def set_learning_rate_all(self, alpha):
+        self.learn_rate = alpha
+        if self.next_layer != None:
+            self.next_layer.set_learning_rate_all(alpha)
     
     
     

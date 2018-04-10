@@ -19,3 +19,4 @@ class InputLayer(object):
     
     def backward_prop(self, dactv):
         pass
+    

@@ -5,6 +5,7 @@ Created on 2 Apr 2018
 '''
 import numpy as np
 from ekai.ai.reversi.reversi import Reversi
+from ekai.ai.reversi.rand_player import RandPlayer
 
 class Trainer(object):
     
@@ -15,6 +16,7 @@ class Trainer(object):
         self.reversi = Reversi()
         self.inp_array = []
         self.side_array = []
+        self.opponent = RandPlayer()
         
     
     def play_one_training_game(self):
@@ -50,6 +52,13 @@ class Trainer(object):
             self.append_move_to_history(move)
             self.reversi.play_move(move)
 
+    
+    def make_move(self, move):
+        if move in self.reversi.get_legal_moves():
+            self.reversi.play_move(move)
+        else:
+            print('illegal move ', move)
+    
     
     def reshape_input(self, cinp):
         return np.row_stack([cinp[0].reshape([64, 1]), cinp[1].reshape([64, 1])])
@@ -94,3 +103,18 @@ class Trainer(object):
         # evaluation
         self.sum_score += abs(self.reversi.board.sum())
 
+
+    # TODO: some randomness so we can evaluate vs opponent
+    def evaluate_one_game(self, side):
+        self.reversi.reset()
+        
+        while self.reversi.moves < 60 and self.reversi.passes < 2:
+            if self.reversi.side == side:
+                self.make_best_move()
+            else:
+                self.make_opponent_move()
+        
+        
+        
+        
+        

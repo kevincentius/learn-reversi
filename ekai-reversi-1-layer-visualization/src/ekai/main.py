@@ -1,14 +1,10 @@
 import pickle
 
-import kivy
-
-from ekai.ai.network.dense_layer import DenseLayer
 from ekai.ai.network.input_layer import InputLayer
 from ekai.ai.network.network import Network
 from ekai.ai.network.output_layer import OutputLayer
 import numpy as np
 from ekai.ai.network.dense_adam_layer import DenseAdamLayer
-from ekai.ai.network.activation.relu import Relu
 from ekai.ai.network.activation.leaky_relu import LeakyRelu
 from ekai.ui.four_layers.application import Application
 

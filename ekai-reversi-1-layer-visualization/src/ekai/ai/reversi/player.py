@@ -5,10 +5,6 @@ Created on 1 Apr 2018
 '''
 from math import inf
 
-from ekai.ai.network.activation.tanh import TanH
-from ekai.ai.network.dense_adam_layer import DenseAdamLayer
-from ekai.ai.network.input_layer import InputLayer
-from ekai.ai.network.network import Network
 import numpy as np
 
 
@@ -25,6 +21,7 @@ class Player(object):
     
     def __init__(self, network):
         self.network = network
+        self.network.set_learning_rate(self.learning_rate)
         
     
     def reshape_input(self, cinp):
@@ -62,3 +59,9 @@ class Player(object):
         self.exploration = max(self.exploration_min, self.exploration * self.exploration_decay)
         # stats
         self.total_games += 1
+        
+        
+    def on_update_learning_rate(self):
+        self.network.set_learning_rate(self.learning_rate)
+        
+        

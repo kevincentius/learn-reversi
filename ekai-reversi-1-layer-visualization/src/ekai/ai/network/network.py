@@ -24,3 +24,12 @@ class Network(object):
     
     def forward_prop(self, inp):
         return self.input_layer.forward_prop(inp)
+    
+    
+    # assuming every layer has the same learning rate
+    def set_learning_rate(self, alpha):
+        self.input_layer.next_layer.set_learning_rate_all(alpha)
+        
+        
+        
+        
