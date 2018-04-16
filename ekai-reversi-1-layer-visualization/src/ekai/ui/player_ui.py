@@ -8,7 +8,7 @@ from ekai.ui.attr_ui import AttrUI
 
 class PlayerUI(AttrUI):
     
-    def __init__(self, load_callback):
+    def __init__(self, pickle_path, load_callback):
         AttrUI.__init__(self, [
             ['name', 'name', 's'],
             ['learning_rate', 'alpha'],
@@ -16,6 +16,6 @@ class PlayerUI(AttrUI):
             ['exploration_decay', 'decay explr'],
             ['exploration', 'exploration'],
             ['total_games', 'experience'],
-        ], 'pickle/player', load_callback);
+        ], pickle_path, load_callback);
     
     

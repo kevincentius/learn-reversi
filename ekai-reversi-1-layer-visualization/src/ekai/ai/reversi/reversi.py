@@ -9,16 +9,15 @@ class Reversi(object):
     Black starts with bottom left and top right of the center.
     '''
     
-    height = 8
-    width = 8
-    size = 64
-    
-    side = 1
-    moves = 0
-    passes = 0
-    
     
     def __init__(self):
+        self.height = 8
+        self.width = 8
+        self.size = 64
+        
+        self.side = 1
+        self.moves = 0
+        self.passes = 0
         self.reset()
         
         

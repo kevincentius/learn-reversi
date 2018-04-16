@@ -9,9 +9,16 @@ from ekai.ai.reversi.rand_player import RandPlayer
 
 class Trainer(object):
     
-    sum_score = 0
-    
     def __init__(self, player):
+        self.sum_score = 0
+        
+        #eval_disp
+        self.eval_games = 0
+        self.eval_wins = 0
+        self.eval_target = 100
+        
+        
+        
         self.player = player
         self.reversi = Reversi()
         self.inp_array = []
@@ -60,6 +67,16 @@ class Trainer(object):
             print('illegal move ', move)
     
     
+
+    def make_opponent_move(self):
+        legal_moves = self.reversi.get_legal_moves()
+        if len(legal_moves) > 0:
+            move = self.opponent.pick_best_move(self.reversi, legal_moves)
+            self.reversi.play_move(move)
+        else:
+            self.reversi.pass_move()
+
+
     def reshape_input(self, cinp):
         return np.row_stack([cinp[0].reshape([64, 1]), cinp[1].reshape([64, 1])])
 
@@ -114,7 +131,12 @@ class Trainer(object):
             else:
                 self.make_opponent_move()
         
+        #print('side: ', side, 'winner: ', self.reversi.get_winner(), 'result: ', side * self.reversi.get_winner())
+        return side * self.reversi.get_winner()
         
         
-        
+    def start_eval(self, num_games):
+        self.eval_target = 100
+        self.eval_games = 0
+        self.eval_wins = 0
         

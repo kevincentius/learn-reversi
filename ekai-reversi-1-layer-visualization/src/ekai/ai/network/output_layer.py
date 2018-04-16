@@ -20,3 +20,7 @@ class OutputLayer(object):
     
     def backward_prop(self, dactv):
         self.prev_layer.backward_prop(dactv)
+    
+    
+    def set_learning_rate_all(self, learning_rate):
+        pass

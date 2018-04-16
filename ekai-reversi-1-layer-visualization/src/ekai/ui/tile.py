@@ -3,10 +3,10 @@ from kivy.uix.button import Button
 
 class Tile(Button):
 
-    last_w_own = None
-    last_w_opp = None
-
     def __init__(self):
+        self.last_w_own = None
+        self.last_w_opp = None
+
         Button.__init__(self)
         self.background_normal = ''
         self.background_color = (0.1, 0.6, 0.1, 1)

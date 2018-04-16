@@ -19,14 +19,11 @@ from ekai.ui.player_ui import PlayerUI
 from ekai.ui.reversi_ui import ReversiUI
 from ekai.ai.network.network import Network
 from ekai.ai.network.activation.leaky_relu import LeakyRelu
+import copy
+from ekai.ai.reversi.rand_player import RandPlayer
 
 
 class Application(App):
-    
-    clockEvent = None
-    
-    reversi_ui = ReversiUI()
-    btn_stack = StackLayout(size_hint=[None, None], width=160)
 
     def create_button(self, text, callback):
         btn = Button(text=text, size_hint_x=None, size_hint_y=None, width=160, height=30)
@@ -35,18 +32,29 @@ class Application(App):
 
     
     def build(self):
+        self.ewa_eval = 0
+        self.ewa_eval_beta = 0.98
+        self.eval_every = 100
+        self.eval_side = 1
+        
+        
+        
+        self.clockEvent = None
+        
+        self.reversi_ui = ReversiUI()
+        self.btn_stack = StackLayout(size_hint=[None, None], width=160)
+
+
+
         # build player
-        learning_rate = 0.01
+        learning_rate = 0.1
         
         input_layer = InputLayer(128)
         last_layer = DenseAdamLayer(input_layer, 128, learning_rate, LeakyRelu())
-        last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
-        last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
-        last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
-        last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
-        last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
-        last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
+        for i in range(0, 14):
+            last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
         last_layer = DenseAdamLayer(last_layer, 1, learning_rate, TanH())
+        #last_layer = DenseAdamLayer(input_layer, 1, learning_rate, TanH())
         
         self.player = Player(Network(input_layer, last_layer))
         
@@ -71,11 +79,17 @@ class Application(App):
         self.create_button('train 1 game', self.reset_and_train_one_game)
         self.create_button('train 10 game', partial(self.train_n_games, 10))
         self.create_button('auto train', self.toggle_auto_train)
+        self.create_button('eval 1 game', self.evaluate_one_game)
+        self.create_button('eval/train 100 games', self.evaluate_100_games)
     
         # build player's AttrUI
-        self.player_ui = PlayerUI(self.player_load_callback)
+        self.player_ui = PlayerUI('pickle/player', self.player_load_callback)
         self.layout.add_widget(self.player_ui.node)
         self.player_ui.set_obj(self.player)
+        
+        # build opponent's AttrUI
+        self.opponent_ui = PlayerUI('pickle/opponent', self.opponent_load_callback)
+        self.layout.add_widget(self.opponent_ui.node)
         
         # prepare board UI
         self.reversi_ui.update(self.trainer.reversi)
@@ -92,6 +106,12 @@ class Application(App):
     def player_load_callback(self, player):
         self.trainer.player = player
         self.player = player
+    
+    
+    def opponent_load_callback(self, opponent):
+        self.trainer.opponent = opponent
+        self.opponent = opponent
+    
     
     def make_random_move(self):
         self.trainer.make_random_move()
@@ -127,13 +147,23 @@ class Application(App):
         self.reversi_ui.update(self.trainer.reversi)
     
     
-    def reset_and_train_one_game(self, t=None):
+    def reset_and_train_one_game(self):
         self.trainer.reversi.reset()
         self.trainer.play_one_training_game()
         self.trainer.finish_and_train()
         self.reversi_ui.update(self.trainer.reversi)
         self.player_ui.update()
         
+        
+    def auto_train(self, t=None):
+        self.reset_and_train_one_game()
+        
+        if self.player.total_games % self.eval_every == 0:
+            result = self.trainer.evaluate_one_game(self.eval_side)
+            self.eval_side *= -1
+            self.ewa_eval = self.ewa_eval_beta * self.ewa_eval + (1 - self.ewa_eval_beta) * result
+            print('Evaluation! Exp: ', self.player.total_games, 'result: ', result, 'ewa: ', self.ewa_eval)
+            
     
     def train_n_games(self, n):
         for i in range(0, n):
@@ -147,21 +177,41 @@ class Application(App):
     
     def toggle_auto_train(self):
         if (self.clockEvent == None):
-            self.clockEvent = Clock.schedule_interval(self.reset_and_train_one_game, 0)
+            self.clockEvent = Clock.schedule_interval(self.auto_train, 0)
         else:
             Clock.unschedule(self.clockEvent)
             self.clockEvent = None
         
     
+    def evaluate_one_game(self):
+        # TODO: random side
+        self.trainer.evaluate_one_game(1)
+        self.reversi_ui.update(self.trainer.reversi)
+        
     
+    def evaluate_100_games(self):
+        # hyper settings
+        training_per_evaluation = 0
+        
+        # result count
+        wins = 0
+        draws = 0
+        losses = 0
+        
+        for i in range(0, 1000):
+            # TODO: random side
+            result = self.trainer.evaluate_one_game(1)
+            print('result: ', result)
+            if result == 1:
+                wins += 1
+            elif result == 0:
+                draws += 1
+            else:
+                losses += 1
+            
+            for j in range(0, training_per_evaluation):
+                self.reset_and_train_one_game()
     
-    
-    
-    
-    
-    
-    
-    
-    
+        print('total', 'wins:', wins, 'draws:', draws, 'losses:', losses)
     
     

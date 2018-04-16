@@ -10,16 +10,18 @@ import numpy as np
 
 class Player(object):
 
-    name = 'untitled'
-
-    learning_rate = 0.001
-    exploration_min = 0.04
-    exploration_decay = 0.999
-    
-    exploration = 1
-    total_games = 0
-    
     def __init__(self, network):
+        self.name = 'untitled'
+    
+        self.learning_rate = 0.0025
+        self.exploration_min = 0.04
+        self.exploration_decay = 0.999
+        
+        self.exploration = 1
+        self.total_games = 0
+        
+        
+    
         self.network = network
         self.network.set_learning_rate(self.learning_rate)
         

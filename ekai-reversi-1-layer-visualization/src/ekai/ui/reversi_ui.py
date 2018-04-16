@@ -4,16 +4,18 @@ from ekai.ui.tile import Tile
 from ekai.ai.reversi.reversi import Reversi
 
 class ReversiUI(object):
-    
-    tile_size = 60
-    spacing = 2
-    
-    node = GridLayout(cols = 8, rows = 8, size_hint_x = None, size_hint_y = None)
-    tiles = []
-    
-    on_tile_clicked = None
 
     def __init__(self):
+        self.tile_size = 60
+        self.spacing = 2
+        
+        self.node = GridLayout(cols = 8, rows = 8, size_hint_x = None, size_hint_y = None)
+        self.tiles = []
+        
+        self.on_tile_clicked = None
+
+
+
         self.node.row_force_default = True
         self.node.col_force_default = True
         self.node.row_default_height = self.tile_size

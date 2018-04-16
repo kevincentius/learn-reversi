@@ -19,8 +19,7 @@ class AttrUI(object):
     #    -> [2]: variable type (optional, default: float)
     #        default: float
     #        's': string
-
-    node = GridLayout(cols=2, row_force_default=True, row_default_height=30, width=250)
+    
     
     def add_row(self, caption):
         label = Label(text=caption, size_hint_x=None, width=80)
@@ -41,6 +40,7 @@ class AttrUI(object):
 
 
     def __init__(self, fields, pickle_path = None, load_callback = None):
+        self.node = GridLayout(cols=2, row_force_default=True, row_default_height=30, width=250)
         self.node.size_hint = None, 1
         
         self.fields = []

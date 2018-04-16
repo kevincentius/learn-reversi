@@ -3,24 +3,25 @@ import numpy as np
 
 class DenseLayer(object):
     
-    # hyperparameters
-    l2regularization = (1-2*0.000)
-
-    # binding
-    next_layer = None
-    
-    # momentum: v = exponentially weighted average
-    # RMSprop: s = exponentially weighted squared average
-    vdw = 0
-    sdw = 0
-    vdb = 0
-    sdb = 0
-    
     # n: number of neurons in this layer
     def __init__(self, prev_layer, n, alpha, activation):
+        # hyperparameters
+        self.l2regularization = (1-2*0.000)
+    
+        # binding
+        self.next_layer = None
+        
+        # momentum: v = exponentially weighted average
+        # RMSprop: s = exponentially weighted squared average
+        self.vdw = 0
+        self.sdw = 0
+        self.vdb = 0
+        self.sdb = 0
+        
+        # build layer
         self.n = n
         self.prev_layer = prev_layer
-        self.w = np.random.rand(n, prev_layer.get_output_size()) * 0.01
+        self.w = np.random.randn(n, prev_layer.get_output_size()) * np.sqrt(2 / prev_layer.get_output_size())
         self.b = (np.random.rand(n) * 0.01).reshape(n, 1)
         self.learn_rate = alpha
         self.activation = activation

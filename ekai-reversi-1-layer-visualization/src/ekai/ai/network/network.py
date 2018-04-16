@@ -15,6 +15,8 @@ class Network(object):
         loss = (out - a)
         loss = np.multiply(loss, loss)
         
+        #print('w:', self.input_layer.next_layer.w)
+        #print('a:', a)
         #print('cost: ', np.sum(loss) / out.shape[1], 'shape: ', out.shape[1])
         
         # backward propagation
