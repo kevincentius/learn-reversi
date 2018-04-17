@@ -19,8 +19,6 @@ from ekai.ui.player_ui import PlayerUI
 from ekai.ui.reversi_ui import ReversiUI
 from ekai.ai.network.network import Network
 from ekai.ai.network.activation.leaky_relu import LeakyRelu
-import copy
-from ekai.ai.reversi.rand_player import RandPlayer
 
 
 class Application(App):
@@ -51,7 +49,7 @@ class Application(App):
         
         input_layer = InputLayer(128)
         last_layer = DenseAdamLayer(input_layer, 128, learning_rate, LeakyRelu())
-        for i in range(0, 14):
+        for i in range(0, 10):
             last_layer = DenseAdamLayer(last_layer, 128, learning_rate, LeakyRelu())
         last_layer = DenseAdamLayer(last_layer, 1, learning_rate, TanH())
         #last_layer = DenseAdamLayer(input_layer, 1, learning_rate, TanH())
@@ -198,7 +196,7 @@ class Application(App):
         draws = 0
         losses = 0
         
-        for i in range(0, 1000):
+        for i in range(0, 100):
             # TODO: random side
             result = self.trainer.evaluate_one_game(1)
             print('result: ', result)

@@ -13,7 +13,7 @@ class Player(object):
     def __init__(self, network):
         self.name = 'untitled'
     
-        self.learning_rate = 0.0025
+        self.learning_rate = 0.0015
         self.exploration_min = 0.04
         self.exploration_decay = 0.999
         
