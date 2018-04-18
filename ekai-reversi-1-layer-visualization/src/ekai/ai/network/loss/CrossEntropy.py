@@ -4,7 +4,7 @@ import numpy as np
 class CrossEntropy(object):
     
     def calc_loss(self, a, out):
-        return -(np.dot(out, np.log(a)) + np.dot(1-out, np.log(1-a)))
+        return -(np.dot(out, np.log(a).T) + np.dot(1-out, np.log(1-a).T))
     
     
     def calc_d_actv(self, a, out):
